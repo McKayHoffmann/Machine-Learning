@@ -90,4 +90,3 @@ plot!(x_train, y_hat,
 )
 
 savefig(progess, "1 layer, 5 neurons")
-
