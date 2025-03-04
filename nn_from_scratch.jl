@@ -9,8 +9,7 @@
 # What about a larger learning rate? -> Didn't work
 # Try a different optimizer (ADAM instead of gradient descent)
 
-using ForwardDiff, Plots
-using ProgressMeter
+using ForwardDiff, Plots, ProgressMeter, Random, Distributions
 
 # Intialize training data
 x_train, x_test = 0:.1:20, 20:.1:40
@@ -25,8 +24,11 @@ lw = 2
 )
 
 # Initialze parameters
-phi = rand(141)
-
+phi = zeros(10351)
+n_in = 50
+n_out = 50
+phi[1:10100] .= rand.(Normal(0, sqrt(2 / (n_in + n_out))))
+phi
 
 function activation(z)      # RELU
     # return (exp(z) - exp(-z)) / (exp(z) + exp(-z))
@@ -38,18 +40,32 @@ function activation(z)      # RELU
     # end
 end
 
-function nn(input_data, phi)        # 2 layers, 10 neurons each
-    w_0 = phi[1:10]
-    w_1 = reshape(phi[11:110], 10, 10)      # 100 x 100
-    w_2 = phi[111:120]
-    b_1 = phi[121:130]
-    b_2 = phi[131:140]
-    b_3 = phi[141]
+
+
+function nn(input_data, phi)        # 5 layers, 50 neurons each
+    w_0 = phi[1:50]     # Notation: w_N -> N = Layer of origin. Example: w_o -> Weights from layer 0 (inputs) to layer 1.
+    w_1 = reshape(phi[51:2550], 50, 50)      # 50 x 50 matrix
+    w_2 = reshape(phi[2551:5050], 50, 50)
+    w_3 = reshape(phi[5051:7550], 50, 50)
+    w_4 = reshape(phi[7551:10050], 50, 50)
+    w_5 = phi[10051:10100]
+    b_1 = phi[10101:10150]
+    b_2 = phi[10151:10200]
+    b_3 = phi[10201:10250]
+    b_4 = phi[10251:10300]
+    b_5 = phi[10301:10350]
+    b_6 = phi[10351]
     z1 = w_0 * input_data + b_1
     a1 = activation.(z1)
     z2 = w_1 * a1 + b_2
     a2 = activation.(z2)
-    y_hat = w_2' * a2 + b_3
+    z3 = w_2 * a2 + b_3
+    a3 = activation.(z3)
+    z4 = w_3 * a3 + b_4
+    a4 = activation.(z4)
+    z5 = w_4 * a4 + b_5
+    a5 = activation.(z5)
+    y_hat = w_5' * a5 + b_6
     return y_hat
 end
 
@@ -86,7 +102,7 @@ wrapped_loss = wrapper(x_train, y_train)        # Wrapped_loss is now a function
 # Initialize Momentum
 ####################################
 vk_1 = 0        # vk-1 is 0 for the first epoch
-beta = 0.4      # Hypervariable for momentum
+beta = 0.0      # Hypervariable for momentum
 LR = 0.1     # Learning rate
 
 # Loss history
@@ -100,7 +116,7 @@ Loss_History = zeros(30000)
 #############################
 # 1st 5000
 #############################
-@showprogress for epochs in 1:5000
+@showprogress for epochs in 1:5
     grad = ForwardDiff.gradient(wrapped_loss, phi)      # Calculate the gradient of loss with respect to phi
     vk = ((beta * vk_1) .+ ((1 - beta)grad)) / (1 - (beta)^epochs)       # Momentum
     vk_1 = vk
@@ -110,10 +126,10 @@ Loss_History = zeros(30000)
     Loss_History[epochs] = Loss(x_train, y_train, phi)
 end
 
-# Loss_History
+Loss_History
 
 plot!(x_train, y_hat,
-    label = "5000 epochs",
+    label = "5 epochs",
     color = :orange,
     lw = 1,
     alpha = 0.5
