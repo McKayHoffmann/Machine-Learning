@@ -25,6 +25,7 @@ n_out = 50      # Neurons out
 phi = zeros(10351)      # 1 input, 1 output, 5 layers, 50 neurons each
 
 ### Glorot initialization ###
+
 phi[1:10100] .= rand.(Normal(0, sqrt(2 / (n_in + n_out))))      # Initialize weights, leave biases as zeros
 
 ### Activation function ###
@@ -72,7 +73,7 @@ end
 
 Loss_History = zeros(30000)     # Keep track of loss to plot after training
 
-titles = "5 layers, 50 neurons each.\nUsing ReverseDiff. Momentum: LR = 0.1, B = 0.0"
+titles = "5 layers, 50 neurons each.\nUsing ReverseDiff. Momentum: LR = 0.2, B = 0.1"
 
 gr(size = (1000, 600))
 
@@ -116,8 +117,8 @@ end
 # OPTIMIZATION STRATEGY: MOMENTUM
 ####################################
 vk_1 = 0        # vk-1 is 0 only for the first epoch, cannot include in a for loop
-beta = 0.0      # Hypervariable for momentum
-LR = 0.1        # Learning rate
+beta = 0.1      # Hypervariable for momentum. (What percent of the old gradient is kept)
+LR = 0.2        # Learning rate
 
 ###################################
 # ReverseDiff.jl
@@ -251,5 +252,5 @@ color = :blue
 )
 
 # Save plots for comparing experiments
-savefig(Loss_plot, "Loss History LR 0,1 Beta 0,0")
-savefig(progress, "Model LR 0,1 Beta 0,0")
+savefig(Loss_plot, "Loss History LR 0,2 Beta 0,1")
+savefig(progress, "Model LR 0,2 Beta 0,1")
