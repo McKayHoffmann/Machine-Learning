@@ -3,7 +3,7 @@ using Flux
 actual(x) = x^2 + 5x - 10
 
 x_train, x_test = hcat(0:5)', hcat(6:10)'
-
+x_train
 y_train, y_test = actual.(x_train), actual.(x_test)
 
 # Dense(#Number of inputs => #Number of outputs)

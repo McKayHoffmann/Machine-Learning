@@ -8,7 +8,7 @@ using Plots, ProgressMeter, Random, Distributions, ReverseDiff
 ####################################
 # TRAINING DATA
 ####################################
-x_train, x_test = 0:.1:20, 20:.1:40
+x_train, x_test = 0:.1:2pi, 0:0.1:2pi
 
 y_train, y_test = sin.(x_train), sin.(x_test)
 
@@ -17,9 +17,9 @@ y_train, y_test = sin.(x_train), sin.(x_test)
 ####################################
 
 ### Initialize parameters ###
-n_in = 50       # Neurons in
-n_out = 50      # Neurons out
-phi = zeros(141)      # 1 input, 1 output, 5 layers, 50 neurons each
+n_in = 10       # Neurons in
+n_out = 10      # Neurons out
+phi = zeros(141)      # 1 input, 1 output, 2 layers, 10 neurons each
 
 ### Glorot initialization ###
 
@@ -55,7 +55,7 @@ end
 # INITIALIZE PLOTS
 ####################################
 
-Loss_History = zeros(100000)     # Keep track of loss to plot after training
+Loss_History = zeros(500_000)     # Keep track of loss to plot after training
 
 titles = "2 layers, 10 neurons each.\nUsing ReverseDiff. Momentum: LR = 0.1, B = 0.2"
 
@@ -110,8 +110,6 @@ LR = 0.1        # Learning rate
 # ReverseDiff.jl
 ###################################
 
-wrapped_loss = wrapper(x_train, y_train) # Input
-
 # pre-record a GradientTape for wrapped_loss
 const loss_tape = ReverseDiff.GradientTape(wrapped_loss, phi)
 
@@ -137,14 +135,14 @@ end
 
 #   1st 20000   #
 ################
-@showprogress for epoch in 1:20000
+@showprogress for epoch in 1:100000
     vk_1, phi = train!(phi, epoch, beta, vk_1, LR, compiled_loss_tape, wrapped_loss)
 end
 
 y_hat = nn.(x_train, Ref(phi))
 
-plot!(x_train, y_hat,
-    label = "20000 epochs",
+plot(x_train, y_hat,
+    label = "100,000 epochs",
     color = :orange,
     lw = 1,
     alpha = 0.5
@@ -152,29 +150,31 @@ plot!(x_train, y_hat,
 
 ### 2nd 20000 ###
 ################
-@showprogress for epoch in 20001:40000
+@showprogress for epoch in 100001:200000
     vk_1, phi = train!(phi, epoch, beta, vk_1, LR, compiled_loss_tape, wrapped_loss)
 end
 
 y_hat = nn.(x_train, Ref(phi))
 
 plot!(x_train, y_hat,
-    label = "40000 epochs",
+    label = "200,000 epochs",
     color = :green,
     lw = 1,
     alpha = 0.5
 )
 
+Loss(x_train, y_train, phi)
+
 ### 3rd 20000 ###
 ################
-@showprogress for epoch in 40001:60000
+@showprogress for epoch in 200001:300000
     vk_1, phi = train!(phi, epoch, beta, vk_1, LR, compiled_loss_tape, wrapped_loss)
 end
 
 y_hat = nn.(x_train, Ref(phi))
 
 plot!(x_train, y_hat,
-    label = "60000 epochs",
+    label = "300,000 epochs",
     color = :cyan,
     lw = 1,
     alpha = 0.5
@@ -182,14 +182,14 @@ plot!(x_train, y_hat,
 
 ### 4th 20000 ###
 ################
-@showprogress for epoch in 60001:80000
+@showprogress for epoch in 300001:400000
     vk_1, phi = train!(phi, epoch, beta, vk_1, LR, compiled_loss_tape, wrapped_loss)
 end
 
 y_hat = nn.(x_train, Ref(phi))
 
-plot!(x_train, y_hat,
-    label = "80000 epochs",
+plot(x_train_3, y_hat,
+    label = "400,000 epochs",
     color = :purple,
     lw = 1,
     alpha = 0.5
@@ -197,17 +197,17 @@ plot!(x_train, y_hat,
 
 ### 5th 20000 ###
 ################
-@showprogress for epoch in 80001:100000
+@showprogress for epoch in 400001:500000
     vk_1, phi = train!(phi, epoch, beta, vk_1, LR, compiled_loss_tape, wrapped_loss)
 end
 
 y_hat = nn.(x_train, Ref(phi))
 
 plot!(x_train, y_hat,
-    label = "100,000 epochs / Final model",
+    label = "500,000 epochs / Final model",
     color = :black,
-    lw = 1,
-    alpha = 2
+    lw = 2,
+    alpha = 1
 )
 
 ######################################################################
@@ -215,7 +215,7 @@ plot!(x_train, y_hat,
 ######################################################################
 
 # Create Loss plot for evaluating training
-Loss_plot = plot(1:100000, Loss_History[1:100000],
+Loss_plot = plot(1:300000, Loss_History[1:300000],
 title = titles,
 label = "Loss",
 xlabel = "Epochs",
@@ -223,5 +223,5 @@ color = :blue
 )
 
 # Save plots for comparing experiments
-savefig(Loss_plot, "Loss History LR 0,2 Beta 0,1")
-savefig(progress, "Model LR 0,2 Beta 0,1")
+savefig(Loss_plot, "Loss History LR 0,1 Beta 0,2 300,000 epochs")
+savefig(progress, "Model LR 0,1 Beta 0,2 300,000 epochs")

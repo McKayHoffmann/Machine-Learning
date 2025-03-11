@@ -4,16 +4,22 @@
 # Date: 2/24/2025
 
 ############ Things to Try ############
-# Try a different optimizer (ADAM instead of gradient descent)
+# Train it giving more data every so many epochs. (Start with 1 period and give it more periods during training.)
+# Make several different models for each portions
+
+########### To do after #############
+# Teach a machine learning model to predict Hess-Smith panel method w/ Cl, Cd, Cm.
+    # Collect data and put it into a file. (DelimitedFiles)
+# A big plus to training a neural net is that you can find an gradient-based optimum.
 
 using Plots, ProgressMeter, Random, Distributions, ReverseDiff
 
 ####################################
 # TRAINING DATA
 ####################################
-x_train, x_test = 0:.1:20, 20:.1:40
+x_train_1, x_train_2, x_train_3, x_train_4 = 0:.1:5, 5.1:0.1:10, 10.1:0.1:15, 15.1:0.1:20
 
-y_train, y_test = sin.(x_train), sin.(x_test)
+y_train_1, y_train_2, y_train_3, y_train_4 = sin.(x_train_1), sin.(x_train_2), sin.(x_train_3), sin.(x_train_4)
 
 ####################################
 # NEURAL NETWORK
@@ -73,7 +79,7 @@ end
 
 Loss_History = zeros(30000)     # Keep track of loss to plot after training
 
-titles = "5 layers, 50 neurons each.\nUsing ReverseDiff. Momentum: LR = 0.2, B = 0.1"
+titles = "5 layers, 50 neurons each.\nUsing ReverseDiff. Momentum: LR = 0.01, B = 0.1"
 
 gr(size = (1000, 600))
 
@@ -118,7 +124,7 @@ end
 ####################################
 vk_1 = 0        # vk-1 is 0 only for the first epoch, cannot include in a for loop
 beta = 0.1      # Hypervariable for momentum. (What percent of the old gradient is kept)
-LR = 0.2        # Learning rate
+LR = 0.01        # Learning rate
 
 ###################################
 # ReverseDiff.jl
@@ -252,5 +258,5 @@ color = :blue
 )
 
 # Save plots for comparing experiments
-savefig(Loss_plot, "Loss History LR 0,2 Beta 0,1")
-savefig(progress, "Model LR 0,2 Beta 0,1")
+savefig(Loss_plot, "Loss History LR 0,01 Beta 0,1")
+savefig(progress, "Model LR 0,01 Beta 0,1")
