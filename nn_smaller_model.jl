@@ -8,7 +8,7 @@ using Plots, ProgressMeter, Random, Distributions, ReverseDiff
 ####################################
 # TRAINING DATA
 ####################################
-x_train, x_test = 0:.1:2pi, 0:0.1:2pi
+x_train, x_test = 0:.05:2pi, 0:0.1:2pi
 
 y_train, y_test = sin.(x_train), sin.(x_test)
 
@@ -139,14 +139,14 @@ end
     vk_1, phi = train!(phi, epoch, beta, vk_1, LR, compiled_loss_tape, wrapped_loss)
 end
 
-y_hat = nn.(x_train, Ref(phi))
-
-plot(x_train, y_hat,
+plot(x_train, nn.(x_train, Ref(phi)),
     label = "100,000 epochs",
     color = :orange,
     lw = 1,
     alpha = 0.5
 )
+
+Loss(x_train, y_train, phi)
 
 ### 2nd 20000 ###
 ################
@@ -154,9 +154,7 @@ plot(x_train, y_hat,
     vk_1, phi = train!(phi, epoch, beta, vk_1, LR, compiled_loss_tape, wrapped_loss)
 end
 
-y_hat = nn.(x_train, Ref(phi))
-
-plot!(x_train, y_hat,
+plot!(x_train, nn.(x_train, Ref(phi)),
     label = "200,000 epochs",
     color = :green,
     lw = 1,
@@ -171,14 +169,14 @@ Loss(x_train, y_train, phi)
     vk_1, phi = train!(phi, epoch, beta, vk_1, LR, compiled_loss_tape, wrapped_loss)
 end
 
-y_hat = nn.(x_train, Ref(phi))
-
-plot!(x_train, y_hat,
+plot!(x_train, nn.(x_train, Ref(phi)),
     label = "300,000 epochs",
     color = :cyan,
     lw = 1,
     alpha = 0.5
 )
+
+Loss(x_train, y_train, phi)
 
 ### 4th 20000 ###
 ################
@@ -186,14 +184,14 @@ plot!(x_train, y_hat,
     vk_1, phi = train!(phi, epoch, beta, vk_1, LR, compiled_loss_tape, wrapped_loss)
 end
 
-y_hat = nn.(x_train, Ref(phi))
-
-plot(x_train_3, y_hat,
+plot(x_train, nn.(x_train, Ref(phi)),
     label = "400,000 epochs",
     color = :purple,
     lw = 1,
     alpha = 0.5
 )
+
+Loss(x_train, y_train, phi)
 
 ### 5th 20000 ###
 ################
@@ -201,9 +199,7 @@ plot(x_train_3, y_hat,
     vk_1, phi = train!(phi, epoch, beta, vk_1, LR, compiled_loss_tape, wrapped_loss)
 end
 
-y_hat = nn.(x_train, Ref(phi))
-
-plot!(x_train, y_hat,
+plot!(x_train, nn.(x_train, Ref(phi)),
     label = "500,000 epochs / Final model",
     color = :black,
     lw = 2,
@@ -215,7 +211,7 @@ plot!(x_train, y_hat,
 ######################################################################
 
 # Create Loss plot for evaluating training
-Loss_plot = plot(1:300000, Loss_History[1:300000],
+Loss_plot = plot(1:500000, Loss_History[1:500000],
 title = titles,
 label = "Loss",
 xlabel = "Epochs",
@@ -225,3 +221,11 @@ color = :blue
 # Save plots for comparing experiments
 savefig(Loss_plot, "Loss History LR 0,1 Beta 0,2 300,000 epochs")
 savefig(progress, "Model LR 0,1 Beta 0,2 300,000 epochs")
+
+function prediction(x, phi)
+    x = x - (2pi * floor(x / 2pi))
+    return nn(x, phi)
+end
+
+prediction(5, phi)
+sin(5)
