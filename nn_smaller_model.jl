@@ -133,82 +133,87 @@ function train!(phi, epoch, beta, vk_1, LR, compiled_loss_tape, wrapped_loss)
     return vk_1, phi
 end
 
-#   1st 20000   #
-################
-@showprogress for epoch in 1:100000
-    vk_1, phi = train!(phi, epoch, beta, vk_1, LR, compiled_loss_tape, wrapped_loss)
+for i in 1:1
+    #   1st 20000   #
+    ################
+    @showprogress for epoch in 1:100000
+        vk_1, phi = train!(phi, epoch, beta, vk_1, LR, compiled_loss_tape, wrapped_loss)
+    end
+
+    plot!(x_train, nn.(x_train, Ref(phi)),
+        label = "100,000 epochs",
+        color = :orange,
+        lw = 1,
+        alpha = 0.5
+    )
+
+    Loss(x_train, y_train, phi)
+
+    ### 2nd 20000 ###
+    ################
+    @showprogress for epoch in 100001:200000
+        vk_1, phi = train!(phi, epoch, beta, vk_1, LR, compiled_loss_tape, wrapped_loss)
+    end
+
+    plot!(x_train, nn.(x_train, Ref(phi)),
+        label = "200,000 epochs",
+        color = :green,
+        lw = 1,
+        alpha = 0.5
+    )
+
+    Loss(x_train, y_train, phi)
+
+    ### 3rd 20000 ###
+    ################
+    @showprogress for epoch in 200001:300000
+        vk_1, phi = train!(phi, epoch, beta, vk_1, LR, compiled_loss_tape, wrapped_loss)
+    end
+
+    plot!(x_train, nn.(x_train, Ref(phi)),
+        label = "300,000 epochs",
+        color = :cyan,
+        lw = 1,
+        alpha = 0.5
+    )
+
+    Loss(x_train, y_train, phi)
+
+    ### 4th 20000 ###
+    ################
+    @showprogress for epoch in 300001:400000
+        vk_1, phi = train!(phi, epoch, beta, vk_1, LR, compiled_loss_tape, wrapped_loss)
+    end
+
+    plot!(x_train, nn.(x_train, Ref(phi)),
+        label = "400,000 epochs",
+        color = :purple,
+        lw = 1,
+        alpha = 0.5
+    )
+
+    Loss(x_train, y_train, phi)
+
+    ### 5th 20000 ###
+    ################
+    @showprogress for epoch in 400001:500000
+        vk_1, phi = train!(phi, epoch, beta, vk_1, LR, compiled_loss_tape, wrapped_loss)
+    end
+
+    plot!(x_train, nn.(x_train, Ref(phi)),
+        label = "500,000 epochs / Final model",
+        color = :black,
+        lw = 2,
+        alpha = 1
+    )
 end
-
-plot(x_train, nn.(x_train, Ref(phi)),
-    label = "100,000 epochs",
-    color = :orange,
-    lw = 1,
-    alpha = 0.5
-)
-
-Loss(x_train, y_train, phi)
-
-### 2nd 20000 ###
-################
-@showprogress for epoch in 100001:200000
-    vk_1, phi = train!(phi, epoch, beta, vk_1, LR, compiled_loss_tape, wrapped_loss)
-end
-
-plot!(x_train, nn.(x_train, Ref(phi)),
-    label = "200,000 epochs",
-    color = :green,
-    lw = 1,
-    alpha = 0.5
-)
-
-Loss(x_train, y_train, phi)
-
-### 3rd 20000 ###
-################
-@showprogress for epoch in 200001:300000
-    vk_1, phi = train!(phi, epoch, beta, vk_1, LR, compiled_loss_tape, wrapped_loss)
-end
-
-plot!(x_train, nn.(x_train, Ref(phi)),
-    label = "300,000 epochs",
-    color = :cyan,
-    lw = 1,
-    alpha = 0.5
-)
-
-Loss(x_train, y_train, phi)
-
-### 4th 20000 ###
-################
-@showprogress for epoch in 300001:400000
-    vk_1, phi = train!(phi, epoch, beta, vk_1, LR, compiled_loss_tape, wrapped_loss)
-end
-
-plot(x_train, nn.(x_train, Ref(phi)),
-    label = "400,000 epochs",
-    color = :purple,
-    lw = 1,
-    alpha = 0.5
-)
-
-Loss(x_train, y_train, phi)
-
-### 5th 20000 ###
-################
-@showprogress for epoch in 400001:500000
-    vk_1, phi = train!(phi, epoch, beta, vk_1, LR, compiled_loss_tape, wrapped_loss)
-end
-
-plot!(x_train, nn.(x_train, Ref(phi)),
-    label = "500,000 epochs / Final model",
-    color = :black,
-    lw = 2,
-    alpha = 1
-)
 
 ######################################################################
 # END TRAINING
 ######################################################################
+
+# View final plot
+progress
 
 # Create Loss plot for evaluating training
 Loss_plot = plot(1:500000, Loss_History[1:500000],
@@ -219,8 +224,8 @@ color = :blue
 )
 
 # Save plots for comparing experiments
-savefig(Loss_plot, "Loss History LR 0,1 Beta 0,2 300,000 epochs")
-savefig(progress, "Model LR 0,1 Beta 0,2 300,000 epochs")
+savefig(Loss_plot, "Loss History LR 0,1 Beta 0,2 500,000 epochs")
+savefig(progress, "Model LR 0,1 Beta 0,2 500,000 epochs")
 
 function prediction(x, phi)
     x = x - (2pi * floor(x / 2pi))
